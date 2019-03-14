@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Basket</title>
+	<link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+	<div class="container">
+		<h1>Книжный интернет магазин</h1>
+		<div class="catalog">
+			<template id="template">
+				<div class="catalog-item">
+					<h3 id="head-item">Name of item</h3>
+					<span id="auth">Author</span>
+					<span id="countr">Country</span>
+					<span id="categ">Category</span><br>
+					<span id="price">Price</span>
+					<button class="buy-btn btn">Купить</button>
+				</div>
+			</template>
+		</div>
+		<div class="basket">
+			<h2>Корзина</h2>
+			<div class="basket-body">
+				<table>	
+					<thead>
+						<tr>
+						<td>Наименование</td>
+						<td>Количество</td>
+						<td>Цена</td>
+						<td>Сумма</td>
+						<td width="25"></td>
+						</tr>
+					</thead>
+					<tbody id="cart-tbl">
+						<template id="basket-row">
+							<tr class="new-row">
+								<td id="row-name">1</td>
+								<td>
+								<button>+</button>
+								<span id="row-count">1</span>
+								<button>-</button>
+								</td>
+								<td id="row-price">1</td>
+								<td id="row-sum">1</td>	
+								<td><button class="del-row-btn">X</button></td>	
+							</tr>
+						</template>
+					</tbody>
+				</table>
+				<span id="total">Ваша корзина пуста</span>
+				<br><br>
+				<button class="send-order btn">Оформить заказ</button>
+				<button class="del-cart-btn btn">Очистить</button>
+			</div>
+			
+		</div>
+	</div>
+
+	<script src="scripts/script.js">
+	</script>
+</body>
+</html>
