@@ -63,6 +63,7 @@ function initCatalog () {
 initCatalog ();
 
 
+
 // Добавление/Удаляем товары в/из корзинy(ы)
 var buy_btn = doc.getElementsByClassName('buy-btn');
 var del_row_btn = doc.getElementsByClassName('del-row-btn');
@@ -74,17 +75,24 @@ for (let i = 0; i < buy_btn.length; i++) {
 	buy_btn[i].addEventListener ('click', function (event) {
 	let row_clone = cart_row.cloneNode(true);
 	let new_item = 1;
-
-	//  Добавление товара - НАЧАЛО
+	console.log (cart);
+	// Добавление товара - НАЧАЛО
 	// Проверяем есть ли в таблице (корзине) товар, который добавляем
-	for (let j = 0; j < cart_tbl.rows.length; j++) {
-		if (cart_tbl.rows[j].getAttribute('id') == products[i].id) { 
-			cart_tbl.rows[j].cells[1].innerHTML = "<button>+</button> " + (cart[j].amount += 1) + " <button>-</button>"; 
-			cart_tbl.rows[j].cells[3].innerHTML = products[i].price * cart[j].amount;
-			new_item = 0; // флаг новый/не новый товар
-			getTotal ();
+	for (let j = 0; j < Object.keys(cart).length; j++) {
+		if (cart[j]) {
+			if (cart[j].id == products[i].id) { 
+				for (let t = 0; t < cart_tbl.rows.length; t++) {
+					if (cart[j].id == cart_tbl.rows[t].getAttribute('id')) {
+						cart_tbl.rows[t].cells[1].innerHTML = "<button>+</button> " + (cart[j].amount += 1) + " <button>-</button>"; 
+						cart_tbl.rows[t].cells[3].innerHTML = products[i].price * cart[j].amount;
+						new_item = 0; // флаг новый/не новый товар
+						getTotal ();	
+					}
+				}
+			}
 		}
 	}
+
 	// Добавляем новый товар
 	if (new_item != 0) {
 		cart.push({
@@ -93,33 +101,53 @@ for (let i = 0; i < buy_btn.length; i++) {
 			amount : 1,
 			price : products[i].price
 		});
-		row_clone.querySelector('#row-name').innerHTML = products[i].name;
-		row_clone.querySelector('#row-price').innerHTML = products[i].price;
-		row_clone.querySelector('#row-sum').innerHTML = products[i].price;
+		row_clone.querySelector('.row-name').innerHTML = products[i].name;
+		row_clone.querySelector('.row-price').innerHTML = products[i].price;
+		row_clone.querySelector('.row-sum').innerHTML = products[i].price;
 		row_clone.querySelector('.new-row').setAttribute('id', products[i].id);
-		row_clone.querySelector('.del-row-btn').setAttribute('id', products[i].id);
+		
+		for (let i = 0; i < cart_tbl.rows.length; i++) {
+			del_row_btn[i].addEventListener('click', function (evnt) {
+				var tr = this.closest('.new-row');
+				// Удаляем из объекта КОРЗИНА
+				for (let j = 0; j < Object.keys(cart).length; j++) {
+					if (cart[j]) {
+						if (tr.getAttribute('id') == cart[j].id) {
+							delete cart[j];
+						}
+					}
+				}
+				// Удалям из таблицы
+				tr.parentNode.removeChild(tr);
+				getTotal ();		
+			});
+		}
+		
 		cart_tbl.appendChild(row_clone);
 		getTotal ();
 	} 
 	//  Добавление товара - Конец
 
 	//  Удаление товара из корзины - НАЧАЛО
-	for (let i = 0; i < cart_tbl.rows.length; i++) {
-		
+	/*for (let i = 0; i < cart_tbl.rows.length; i++) {
 		del_row_btn[i].addEventListener ('click', function (evnt) {
-		for (let j = 0; j < Object.keys(cart).length; j++){
-				console.log (cart);
-				var tr = this.closest('.new-row');
-				cart.splice(i, 1);// Удаляем из объекта КОРЗИНА
-				tr.parentNode.removeChild(tr);// Удалям из таблицы
-				getTotal ();
-			}		
+			console.log (cart[i]);
+			var tr = this.closest('.new-row');
+			// Удалям из таблицы
+			tr.parentNode.removeChild(tr);
+			// Удаляем из объекта КОРЗИНА
+			for (let j = 0; j < Object.keys(cart).length; j++) {
+				if (tr.getAttribute('id') == cart[j].id) {
+					delete cart[j];
+				}
+			}
+			getTotal ();		
 		});
-	}
-	console.log (cart);
+	}*/
 	//  Удаление товара из корзины - КОНЕЦ
 });
 }
+
 
 // Очистка корзины
 var clear_cart = doc.querySelector('.del-cart-btn');
@@ -136,14 +164,17 @@ clear_cart.addEventListener('click', function () {
 	removeCart();
 });
 
+
 // Подсчёт итоговой суммы
 function getTotal () {
-	let amount = 0;
+	let totalSum = 0;
 	for (let i = 0; i < Object.keys(cart).length; i++) {
-		amount += cart[i].price * cart[i].amount;
+		if (cart[i]) {
+			totalSum += cart[i].price * cart[i].amount;
+		}
 	}
-	if (amount != 0){
-		total_sum.innerHTML = 'Итого: ' + amount;
+	if (totalSum != 0){
+		total_sum.innerHTML = 'Итого: ' + totalSum;
 	} else {
 		total_sum.innerHTML = 'Ваша корзина пуста.'
 	}
@@ -165,6 +196,9 @@ send_btn.addEventListener ('click', function () {
 		removeCart ();
 	}
 });
+
+
+
 
 
 
